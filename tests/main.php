@@ -143,6 +143,7 @@
 			$this->assertEquals( $form['digests']['digest_emails'], array( 'testing@digests.lo','testing2@digests.lo' ) );
 			$this->assertEquals( $form['digests']['digest_interval'], 'minute' );
 			$this->assertEquals( $form['digests']['digest_group'], '' );
+			$this->assertEquals( $form['digests']['digest_export_all_fields'], true );
 
 			/* Assert that a cronjob has been scheduled */
 			$this->assertEquals( wp_get_schedule( 'gf_digest_send_notifications', array( 1 ) ), 'minute' );
