@@ -40,7 +40,7 @@
 		public function test_reschedule_existing_simple() {
 			wp_set_current_user( 1 );
 
-			/* Activate digetsts for a form */
+			/* Activate digests for a form */
 			$_POST['form_notification_enable_digest'] = true;
 			$_POST['save'] = true;
 			$_GET['id'] = '1';
@@ -62,7 +62,7 @@
 		public function test_reschedule_existing_groups() {
 			wp_set_current_user( 1 );
 
-			/* Activate digetsts for a form */
+			/* Activate digests for a form */
 			$_POST['form_notification_enable_digest'] = true;
 			$_POST['save'] = true;
 			$_GET['id'] = '1';
@@ -75,7 +75,7 @@
 
 			$this->digest->init(); // TODO: A better way to add
 
-			/* Activate digetsts for a form */
+			/* Activate digests for a form */
 			$_POST['form_notification_enable_digest'] = true;
 			$_POST['save'] = true;
 			$_GET['id'] = '2';
@@ -96,7 +96,7 @@
 			$this->assertTrue( $schedule_1 == 'minute' || $schedule_2 == 'minute' );
 			$this->assertTrue( $schedule_1 xor $schedule_2 );
 
-			/* Activate digetsts for a form */
+			/* Activate digests for a form */
 			$_POST['form_notification_enable_digest'] = true;
 			$_POST['save'] = true;
 			$_GET['id'] = '2';
@@ -123,7 +123,7 @@
 
 			wp_set_current_user( 1 );
 
-			/* Activate digetsts for a form */
+			/* Activate digests for a form */
 			$_POST['form_notification_enable_digest'] = true;
 			$_POST['save'] = true;
 			$_GET['id'] = '1';
@@ -152,7 +152,7 @@
 		public function test_email_notification_simple() {
 			wp_set_current_user( 1 );
 
-			/* Activate digetsts for a form */
+			/* Activate digests for a form */
 			$_POST['form_notification_enable_digest'] = true;
 			$_POST['save'] = true;
 			$_GET['id'] = '2';
@@ -183,7 +183,7 @@
 		public function test_email_notification_groups() {
 			wp_set_current_user( 1 );
 
-			/* Activate digetsts for a form */
+			/* Activate digests for a form */
 			$_POST['form_notification_enable_digest'] = true;
 			$_POST['save'] = true;
 			$_GET['id'] = '1';
@@ -196,7 +196,7 @@
 
 			$this->digest->init(); // TODO: A better way to add
 
-			/* Activate digetsts for a form */
+			/* Activate digests for a form */
 			$_POST['form_notification_enable_digest'] = true;
 			$_POST['save'] = true;
 			$_GET['id'] = '2';
