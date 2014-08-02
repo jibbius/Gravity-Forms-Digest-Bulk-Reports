@@ -244,6 +244,74 @@
 			$this->assertEquals( 4, count( $phpmailer->mock_sent ) );
 		}
 
+		public function test_plaintext_filter_off() {
+			wp_set_current_user( 1 );
+
+			/* Activate digests for a form */
+			$_POST['form_notification_enable_digest'] = true;
+			$_POST['save'] = true;
+			$_GET['id'] = '2';
+			$_POST['form_notification_digest_screen'] = true;
+			$_POST['form_notification_enable_digest'] = true;
+			$_POST['form_notification_digest_emails'] = 'testing@digests.lo';
+			$_POST['form_notification_digest_interval'] = 'minute';
+			$_POST['form_notification_digest_group'] = '';
+			$_POST['form_notification_digest_export_fields'] = 'all';
+
+			$this->digest->init(); // TODO: A better way to add
+
+			$_POST[] = array(); $_GET[] = array(); $null = null;
+			$_POST['input_1'] = 'Gary'; $_POST['input_2'] = 'yesterday';
+			RGFormsModel::save_lead( RGFormsModel::get_form_meta( 2 ), $null );
+
+			global $phpmailer;
+
+			// Send plaintext email
+			$this->digest->send_notifications( 2 );
+			$this->assertEquals( 1, count( $phpmailer->mock_sent ) );
+			foreach ($phpmailer->mock_sent as $mail){
+				$this->assertContains('The Name:', $mail['body']);
+				$this->assertContains('Gary', $mail['body']);
+				$this->assertContains('The Day:', $mail['body']);
+				$this->assertContains('yesterday', $mail['body']);
+			}
+		}
+
+		public function test_plaintext_filter_on() {
+			wp_set_current_user( 1 );
+
+			/* Activate digests for a form */
+			$_POST['form_notification_enable_digest'] = true;
+			$_POST['save'] = true;
+			$_GET['id'] = '2';
+			$_POST['form_notification_digest_screen'] = true;
+			$_POST['form_notification_enable_digest'] = true;
+			$_POST['form_notification_digest_emails'] = 'testing@digests.lo';
+			$_POST['form_notification_digest_interval'] = 'minute';
+			$_POST['form_notification_digest_group'] = '';
+			$_POST['form_notification_digest_export_fields'] = 'specified';
+			$_POST['form_notification_digest_field_1'] = true;
+			$_POST['form_notification_digest_field_2'] = false;
+
+			$this->digest->init(); // TODO: A better way to add
+
+			$_POST[] = array(); $_GET[] = array(); $null = null;
+			$_POST['input_1'] = 'Gary'; $_POST['input_2'] = 'yesterday';
+			RGFormsModel::save_lead( RGFormsModel::get_form_meta( 2 ), $null );
+
+			global $phpmailer;
+
+			// Send plaintext email
+			$this->digest->send_notifications( 2 );
+			$this->assertEquals( 1, count( $phpmailer->mock_sent ) );
+			foreach ($phpmailer->mock_sent as $mail){
+				$this->assertContains('The Name:', $mail['body']);
+				$this->assertContains('Gary', $mail['body']);
+				$this->assertNotContains('The Day:', $mail['body']);
+				$this->assertNotContains('yesterday', $mail['body']);
+			}
+		}
+
 		/** Group notifications */
 		public function test_email_notification_groups() {
 			wp_set_current_user( 1 );
@@ -310,5 +378,6 @@
 			fclose( $csv );
 			unlink( $filename );
 		}
+
 	}
 ?>
