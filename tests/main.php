@@ -207,7 +207,7 @@
 			$this->digest->send_notifications( 2 );
 			$this->assertEquals( 2, count( $phpmailer->mock_sent ) );
 
-			// Send 2nd set of emails
+			// 2nd attempt to send emails (additional email should NOT be sent)
 			$this->digest->send_notifications( 2 );
 			$this->assertEquals( 2, count( $phpmailer->mock_sent ) );
 		}
