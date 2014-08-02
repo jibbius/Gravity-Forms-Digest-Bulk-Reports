@@ -180,6 +180,70 @@
 			$this->assertEquals( count( $phpmailer->mock_sent ), 2 );
 		}
 
+		public function test_email_notification_not_report_always() {
+			wp_set_current_user( 1 );
+
+			/* Activate digests for a form */
+			$_POST['form_notification_enable_digest'] = true;
+			$_POST['save'] = true;
+			$_GET['id'] = '2';
+			$_POST['form_notification_digest_screen'] = true;
+			$_POST['form_notification_enable_digest'] = true;
+			$_POST['form_notification_digest_emails'] = 'testing@digests.lo, testing2@digests.lo';
+			$_POST['form_notification_digest_interval'] = 'minute';
+			$_POST['form_notification_digest_group'] = '';
+			$_POST['form_notification_digest_export_fields'] = 'all';
+			$_POST['form_notification_digest_report_always'] = false;
+
+			$this->digest->init(); // TODO: A better way to add
+
+			$_POST[] = array(); $_GET[] = array(); $null = null;
+			$_POST['input_1'] = 'Gary'; $_POST['input_2'] = 'yesterday';
+			RGFormsModel::save_lead( RGFormsModel::get_form_meta( 2 ), $null );
+
+			global $phpmailer;
+
+			// Send 1st set of emails
+			$this->digest->send_notifications( 2 );
+			$this->assertEquals( 2, count( $phpmailer->mock_sent ) );
+
+			// Send 2nd set of emails
+			$this->digest->send_notifications( 2 );
+			$this->assertEquals( 2, count( $phpmailer->mock_sent ) );
+		}
+
+		public function test_email_notification_report_always() {
+			wp_set_current_user( 1 );
+
+			/* Activate digests for a form */
+			$_POST['form_notification_enable_digest'] = true;
+			$_POST['save'] = true;
+			$_GET['id'] = '2';
+			$_POST['form_notification_digest_screen'] = true;
+			$_POST['form_notification_enable_digest'] = true;
+			$_POST['form_notification_digest_emails'] = 'testing@digests.lo, testing2@digests.lo';
+			$_POST['form_notification_digest_interval'] = 'minute';
+			$_POST['form_notification_digest_group'] = '';
+			$_POST['form_notification_digest_export_fields'] = 'all';
+			$_POST['form_notification_digest_report_always'] = true;
+
+			$this->digest->init(); // TODO: A better way to add
+
+			$_POST[] = array(); $_GET[] = array(); $null = null;
+			$_POST['input_1'] = 'Gary'; $_POST['input_2'] = 'yesterday';
+			RGFormsModel::save_lead( RGFormsModel::get_form_meta( 2 ), $null );
+
+			global $phpmailer;
+
+			// Send 1st set of emails
+			$this->digest->send_notifications( 2 );
+			$this->assertEquals( 2, count( $phpmailer->mock_sent ) );
+
+			// Send 2nd set of emails
+			$this->digest->send_notifications( 2 );
+			$this->assertEquals( 4, count( $phpmailer->mock_sent ) );
+		}
+
 		/** Group notifications */
 		public function test_email_notification_groups() {
 			wp_set_current_user( 1 );
