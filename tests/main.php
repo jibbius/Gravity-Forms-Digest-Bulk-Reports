@@ -312,6 +312,88 @@
 			}
 		}
 
+		public function test_enable_csv_mode() {
+			/* Enable CSV mode */
+			define( 'GF_DIGESTS_AS_CSV', true );
+		}
+
+		public function test_csv_filter_off() {
+			return;
+			wp_set_current_user( 1 );
+			/* Activate digests for a form */
+			$_POST['form_notification_enable_digest'] = true;
+			$_POST['save'] = true;
+			$_GET['id'] = '2';
+			$_POST['form_notification_digest_screen'] = true;
+			$_POST['form_notification_enable_digest'] = true;
+			$_POST['form_notification_digest_emails'] = 'testing@digests.lo';
+			$_POST['form_notification_digest_interval'] = 'minute';
+			$_POST['form_notification_digest_group'] = '';
+			$_POST['form_notification_digest_export_fields'] = 'all';
+
+			$this->digest->init(); // TODO: A better way to add
+
+			$_POST[] = array(); $_GET[] = array(); $null = null;
+			$_POST['input_1'] = 'Gary'; $_POST['input_2'] = 'yesterday';
+			RGFormsModel::save_lead( RGFormsModel::get_form_meta( 2 ), $null );
+
+			global $phpmailer;
+
+			// Send 1st set of emails
+			$this->digest->send_notifications( 2 );
+			$this->assertEquals( 1, count( $phpmailer->mock_sent ) );
+
+			/* Let's take a look here... (should be in a test of its own) */
+			preg_match( '#filename="?(.*\.csv)"?#', $phpmailer->mock_sent[0]['body'], $matches );
+			$filename = sys_get_temp_dir() . '/' . $matches[1];
+			$file_contents = file_get_contents ($filename);
+
+			$this->assertContains('The Name', $file_contents);
+			$this->assertContains('Gary', $file_contents);
+			$this->assertContains('The Day', $file_contents);
+			$this->assertContains('yesterday', $file_contents);
+		}
+
+		public function test_csv_filter_on() {
+			return;
+			wp_set_current_user( 1 );
+			/* Activate digests for a form */
+			$_POST['form_notification_enable_digest'] = true;
+			$_POST['save'] = true;
+			$_GET['id'] = '2';
+			$_POST['form_notification_digest_screen'] = true;
+			$_POST['form_notification_enable_digest'] = true;
+			$_POST['form_notification_digest_emails'] = 'testing@digests.lo';
+			$_POST['form_notification_digest_interval'] = 'minute';
+			$_POST['form_notification_digest_group'] = '';
+			$_POST['form_notification_digest_export_fields'] = 'all';
+			$_POST['form_notification_digest_export_fields'] = 'specified';
+			$_POST['form_notification_digest_field_1'] = true;
+			$_POST['form_notification_digest_field_2'] = false;
+
+			$this->digest->init(); // TODO: A better way to add
+
+			$_POST[] = array(); $_GET[] = array(); $null = null;
+			$_POST['input_1'] = 'Gary'; $_POST['input_2'] = 'yesterday';
+			RGFormsModel::save_lead( RGFormsModel::get_form_meta( 2 ), $null );
+
+			global $phpmailer;
+
+			// Send 1st set of emails
+			$this->digest->send_notifications( 2 );
+			$this->assertEquals( 1, count( $phpmailer->mock_sent ) );
+
+			/* Let's take a look here... (should be in a test of its own) */
+			preg_match( '#filename="?(.*\.csv)"?#', $phpmailer->mock_sent[0]['body'], $matches );
+			$filename = sys_get_temp_dir() . '/' . $matches[1];
+			$file_contents = file_get_contents ($filename);
+
+			$this->assertContains('The Name', $file_contents);
+			$this->assertContains('Gary', $file_contents);
+			$this->assertNotContains('The Day', $file_contents);
+			$this->assertNotContains('yesterday', $file_contents);
+		}
+
 		/** Group notifications */
 		public function test_email_notification_groups() {
 			wp_set_current_user( 1 );
@@ -353,9 +435,6 @@
 			$_POST['input_1'] = 'Larry'; $_POST['input_2'] = 'tomorrow';
 			RGFormsModel::save_lead( RGFormsModel::get_form_meta( 2 ), $null );
 
-			/* Enable CSV mode to allow us to parse the body */
-			define( 'GF_DIGESTS_AS_CSV', true );
-
 			/* Test the correct cron call */
 			do_action_ref_array( 'gf_digest_send_notifications', array( 1 ) );
 
@@ -378,6 +457,5 @@
 			fclose( $csv );
 			unlink( $filename );
 		}
-
 	}
 ?>
