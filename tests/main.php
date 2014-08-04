@@ -318,7 +318,6 @@
 		}
 
 		public function test_csv_filter_off() {
-			return;
 			wp_set_current_user( 1 );
 			/* Activate digests for a form */
 			$_POST['form_notification_enable_digest'] = true;
@@ -355,7 +354,6 @@
 		}
 
 		public function test_csv_filter_on() {
-			return;
 			wp_set_current_user( 1 );
 			/* Activate digests for a form */
 			$_POST['form_notification_enable_digest'] = true;
@@ -458,4 +456,3 @@
 			unlink( $filename );
 		}
 	}
-?>
